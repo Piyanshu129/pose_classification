@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pose Detection</title>
+    <script>
+        function fetchPoseInfo() {
+            fetch('/pose_info')
+                .then(response => response.json())
+                .then(data => {
+                    // Update angle information
+                    document.getElementById('angles').textContent = JSON.stringify(data.angles, null, 2);
+
+                    // Update bbox information
+                    document.getElementById('bbox').textContent = JSON.stringify(data.bbox, null, 2);
+
+                    // Update pose image
+                    var poseLabel = data.pose_label.toLowerCase();
+                    var poseImage = document.getElementById('pose-image');
+                    poseImage.src = `static/images/${poseLabel}.png`;
+                    poseImage.alt = poseLabel.charAt(0).toUpperCase() + poseLabel.slice(1);
+                })
+                .catch(error => console.error('Error fetching pose info:', error));
+        }
+
+        // Fetch pose info every 2 seconds
+        setInterval(fetchPoseInfo, 2000);
+    </script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        #rtsp_url {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        #pose-info {
+            width: 80%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #007bff;
+        }
+
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            overflow-x: auto;
+        }
+
+        #pose-image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        #pose-image {
+            width: 200px;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pose Detection Stream</h1>
+    <form action="" method="get">
+        <label for="rtsp_url">RTSP Stream URL:</label>
+        <input type="text" id="rtsp_url" name="rtsp_url" placeholder="rtsp://username:password@ip_address:port/path">
+        <button type="submit">Submit</button>
+    </form>
+    <img src="{{ url_for('video_feed', rtsp_url=request.args.get('rtsp_url')) }}" alt="Pose Detection Stream">
+    <div id="pose-info">
+        <h2>Pose Information</h2>
+        <pre id="angles">Angles will be displayed here...</pre>
+        <pre id="bbox">Bounding box coordinates will be displayed here...</pre>
+        <div id="pose-image-container">
+            <img id="pose-image" src="static/images/default.png" alt="Pose Image">
+        </div>
+    </div>
+</body>
+</html>
