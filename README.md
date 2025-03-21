@@ -1,4 +1,4 @@
-# 🏋️‍♂️ Pose Classification Project (ADE)  
+# 🏋️‍♂️ Pose Classification Project   
 
 This project is a **real-time pose classification system** using **Python, OpenCV, and MediaPipe**. It detects and classifies human poses, making it useful for fitness tracking, posture correction, and AI-powered surveillance.
 
